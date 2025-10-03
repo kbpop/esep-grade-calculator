@@ -94,18 +94,20 @@ func TestGetGradeF_Empty(t *testing.T) {
 	}
 }
 
+// UPDATED: Now checks the length of the single 'grades' slice.
 func TestAddGrade_InvalidType(t *testing.T) {
 	gradeCalculator := NewGradeCalculator()
 
 	const Invalid GradeType = 99
 
-	initial_length := len(gradeCalculator.assignments) + len(gradeCalculator.exams) + len(gradeCalculator.essays)
+	initial_length := len(gradeCalculator.grades) // Check single slice length
+
 	gradeCalculator.AddGrade("bad grade", 100, Invalid)
 
-	final_length := len(gradeCalculator.assignments) + len(gradeCalculator.exams) + len(gradeCalculator.essays)
+	final_length := len(gradeCalculator.grades) // Check single slice length
 
 	if final_length != initial_length {
-		t.Errorf("AddGrade with invalid GradeType should not modify grade lists")
+		t.Errorf("AddGrade with invalid GradeType should not modify grade list. Expected length %d, got %d", initial_length, final_length)
 	}
 }
 
@@ -118,6 +120,7 @@ func TestGetGradeB_OneCategoryEmpty(t *testing.T) {
 
 	gradeCalculator.AddGrade("E1", 100, Exam)
 
+	// Note: No Essay grade added. The logic relies on filterGrades returning an empty slice for Essay.
 	actual_value := gradeCalculator.GetFinalGrade()
 
 	if expected_value != actual_value {
