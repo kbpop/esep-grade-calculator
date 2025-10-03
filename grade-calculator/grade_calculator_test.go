@@ -34,6 +34,38 @@ func TestGetGradeB(t *testing.T) {
 	}
 }
 
+func TestGetGradeC(t *testing.T) {
+	expected_value := "C"
+
+	gradeCalculator := NewGradeCalculator()
+
+	gradeCalculator.AddGrade("open source assignment", 75, Assignment)
+	gradeCalculator.AddGrade("exam 1", 71, Exam)
+	gradeCalculator.AddGrade("essay on ai ethics", 75, Essay)
+
+	actual_value := gradeCalculator.GetFinalGrade()
+
+	if expected_value != actual_value {
+		t.Errorf("Expected GetGrade to return '%s'; got '%s' instead", expected_value, actual_value)
+	}
+}
+
+func TestGetGradeD(t *testing.T) {
+	expected_value := "D"
+
+	gradeCalculator := NewGradeCalculator()
+
+	gradeCalculator.AddGrade("open source assignment", 60, Assignment)
+	gradeCalculator.AddGrade("exam 1", 60, Exam)
+	gradeCalculator.AddGrade("essay on ai ethics", 65, Essay)
+
+	actual_value := gradeCalculator.GetFinalGrade()
+
+	if expected_value != actual_value {
+		t.Errorf("Expected GetGrade to return '%s'; got '%s' instead", expected_value, actual_value)
+	}
+}
+
 func TestGetGradeF(t *testing.T) {
 	expected_value := "F"
 
@@ -47,5 +79,65 @@ func TestGetGradeF(t *testing.T) {
 
 	if expected_value != actual_value {
 		t.Errorf("Expected GetGrade to return '%s'; got '%s' instead", expected_value, actual_value)
+	}
+}
+
+func TestGetGradeF_Empty(t *testing.T) {
+	expected_value := "F"
+
+	gradeCalculator := NewGradeCalculator()
+
+	actual_value := gradeCalculator.GetFinalGrade()
+
+	if expected_value != actual_value {
+		t.Errorf("Expected GetFinalGrade for empty calculator to return '%s'; got '%s' instead", expected_value, actual_value)
+	}
+}
+
+func TestAddGrade_InvalidType(t *testing.T) {
+	gradeCalculator := NewGradeCalculator()
+
+	const Invalid GradeType = 99
+
+	initial_length := len(gradeCalculator.assignments) + len(gradeCalculator.exams) + len(gradeCalculator.essays)
+	gradeCalculator.AddGrade("bad grade", 100, Invalid)
+
+	final_length := len(gradeCalculator.assignments) + len(gradeCalculator.exams) + len(gradeCalculator.essays)
+
+	if final_length != initial_length {
+		t.Errorf("AddGrade with invalid GradeType should not modify grade lists")
+	}
+}
+
+func TestGetGradeB_OneCategoryEmpty(t *testing.T) {
+	expected_value := "B"
+
+	gradeCalculator := NewGradeCalculator()
+
+	gradeCalculator.AddGrade("A1", 100, Assignment)
+
+	gradeCalculator.AddGrade("E1", 100, Exam)
+
+	actual_value := gradeCalculator.GetFinalGrade()
+
+	if expected_value != actual_value {
+		t.Errorf("Expected GetFinalGrade to return '%s'; got '%s' instead", expected_value, actual_value)
+	}
+}
+
+func TestGradeTypeString(t *testing.T) {
+	if Assignment.String() != "assignment" {
+		t.Errorf("Expected Assignment.String() to be 'assignment', got %s", Assignment.String())
+	}
+	if Exam.String() != "exam" {
+		t.Errorf("Expected Exam.String() to be 'exam', got %s", Exam.String())
+	}
+	if Essay.String() != "essay" {
+		t.Errorf("Expected Essay.String() to be 'essay', got %s", Essay.String())
+	}
+
+	const Unmapped GradeType = 99
+	if Unmapped.String() != "" {
+		t.Errorf("Expected unmapped GradeType.String() to be '', got %s", Unmapped.String())
 	}
 }
